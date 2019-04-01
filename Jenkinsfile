@@ -5,6 +5,8 @@ pipeline {
  {
       stage("BASIC")
      {
+      stages 
+        {       
           stage('Build') 
         {
             steps 
@@ -26,11 +28,12 @@ pipeline {
                 echo 'Deploying....'
             }
         }
-
+        }
      }
      
      stage("ALIAS")
      {
+         stages{
           stage('Build') 
         {
             steps 
@@ -52,7 +55,7 @@ pipeline {
                 echo 'Deploying....'
             }
         }
-
+         }
      }
 
  }
