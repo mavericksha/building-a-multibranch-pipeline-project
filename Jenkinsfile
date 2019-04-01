@@ -1,20 +1,101 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Build') {
-            steps {
+ stages 
+ {
+      stage("BASIC")
+     {
+          stage('Build') 
+        {
+            steps 
+            {
                 echo 'Building..'
             }
         }
-        stage('Test') {
-            steps {
+        stage('Test') 
+        {
+            steps 
+            {
                 echo 'Testing..'
             }
         }
-        stage('Deploy') {
-            steps {
+        stage('Deploy')
+        {
+            steps 
+            {
                 echo 'Deploying....'
+            }
+        }
+
+     }
+     
+     stage("ALIAS")
+     {
+          stage('Build') 
+        {
+            steps 
+            {
+                echo 'Building..'
+            }
+        }
+        stage('Test') 
+        {
+            steps 
+            {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy')
+        {
+            steps 
+            {
+                echo 'Deploying....'
+            }
+        }
+
+     }
+
+ }
+}
+
+
+
+pipeline {
+    agent none
+
+    stages {
+        stage("build and test the project") {
+            agent {
+                docker "our-build-tools-image"
+            }
+            stages {
+               stage("build") {
+                   steps {
+                       sh "./build.sh"
+                   }
+               }
+               stage("test") {
+                   steps {
+                       sh "./test.sh"
+                   }
+               }
+            }
+            post {
+                success {
+                    stash name: "artifacts", includes: "artifacts/**/*"
+                }
+            }
+        }
+
+        stage("deploy the artifacts if a user confirms") {
+            input {
+                message "Should we deploy the project?"
+            }
+            agent {
+                docker "our-deploy-tools-image"
+            }
+            steps {
+                sh "./deploy.sh"
             }
         }
     }
